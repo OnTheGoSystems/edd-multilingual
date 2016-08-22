@@ -1,12 +1,11 @@
 <?php 
 /*
-Plugin Name: Easy Digital Downloads multilingual
-Plugin URI: http://www.wpml.org/documentation/related-projects/easy-digital-downloads-multilingual
-Description: A plugin to enable seemless integration between Easy-Digital-Downloads and WPML
+Plugin Name: Easy Digital Downloads Multilingual
+Plugin URI: https://wordpress.org/plugins/edd-multilingual/
+Description: A plugin to enable seamless integration between Easy-Digital-Downloads and WPML
 Version: 1.2.1
-Author: ICanLocalize
-Author URI: http://wpml.org
-License: GPL2
+Author: OnTheGoSystems
+Author URI: http://www.onthegosystems.com/
 */
 
 if(defined('EDD_MULTILINGUAL_VERSION')) return;
