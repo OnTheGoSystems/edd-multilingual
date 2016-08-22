@@ -6,7 +6,7 @@ class EDD_multilingual{
     }
 
     function init() {
-        global $sitepress, $edd_options;
+        global $wpdb, $sitepress, $edd_options;
 
         // Sanity check
         if (!defined('ICL_SITEPRESS_VERSION') || !defined('EDD_PLUGIN_DIR')) {
@@ -47,7 +47,7 @@ class EDD_multilingual{
 		add_action('wp_ajax_edd_recalculate', array($this, 'recalculate_download_totals'));
 
 		// Add back the flags to downloads manager
-		add_filter('edd_download_columns', array($sitepress, 'add_posts_management_column'));
+		add_filter( 'edd_download_columns', array( new WPML_Custom_Columns( $wpdb, $sitepress ), 'add_posts_management_column' ) );
     }
 
     // Error message if there are missing plugins
