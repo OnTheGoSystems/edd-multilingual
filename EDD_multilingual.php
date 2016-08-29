@@ -8,10 +8,10 @@ Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com/
 */
 
-if(defined('EDD_MULTILINGUAL_VERSION')) return;
+if ( defined('EDD_MULTILINGUAL_VERSION') ) return;
 
-define('EDD_MULTILINGUAL_VERSION', '1.2.2');
-define('EDD_MULTILINGUAL_PATH', dirname(__FILE__));
+define( 'EDD_MULTILINGUAL_VERSION', '1.2.2' );
+define( 'EDD_MULTILINGUAL_PATH', dirname(__FILE__) );
 
 require EDD_MULTILINGUAL_PATH . '/EDD_multilingual.class.php';
 
