@@ -8,14 +8,14 @@ class EDD_multilingual {
 	/**
 	 * EDD_multilingual constructor.
 	 */
-	function __construct() {
+	public function __construct() {
 		add_action( 'plugins_loaded', array( $this, 'edd_ml_init' ), 20 );
 	}
 
 	/**
 	 * Initialize plugin.
 	 */
-	function edd_ml_init() {
+	public function edd_ml_init() {
 		// Sanity check
 		if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ! defined( 'EDD_VERSION' ) ) {
 			add_action( 'admin_notices', array( $this, 'edd_ml_error_no_plugins' ) );
@@ -70,7 +70,7 @@ class EDD_multilingual {
 	 *
 	 * @param $payment
 	 */
-	function edd_ml_save_payment_language( $payment ) {
+	public function edd_ml_save_payment_language( $payment ) {
 		update_post_meta( $payment, 'wpml_language', apply_filters( 'wpml_current_language', null ) );
 	}
 
@@ -79,7 +79,7 @@ class EDD_multilingual {
 	 */
 	public function edd_ml_switch_payment_language() {
 		if ( is_admin() && isset( $_GET['edd-action'] ) && $_GET['edd-action'] == 'email_links' ) {
-			$language_code = $this->edd_ml_get_payment_language( $_GET['purchase_id'] );
+			$language_code = self::edd_ml_get_payment_language( $_GET['purchase_id'] );
 
 			if ( ! empty( $language_code ) ) {
 				do_action( 'wpml_switch_language', $language_code );
@@ -204,7 +204,7 @@ class EDD_multilingual {
 	 */
 	public function edd_ml_render_payments_table_column( $value, $payment_id, $column_name ) {
 		if ( $column_name === 'language' ) {
-			$language_code = $this->edd_ml_get_payment_language( $payment_id );
+			$language_code = self::edd_ml_get_payment_language( $payment_id );
 			$languages     = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
 
 			if ( array_key_exists( $language_code, $languages ) ) {
@@ -226,7 +226,7 @@ class EDD_multilingual {
 	 *
 	 * @return String
 	 */
-	public function edd_ml_get_payment_language( $payment_id ) {
+	public static function edd_ml_get_payment_language( $payment_id ) {
 		return get_post_meta( intval( $payment_id ), 'wpml_language', true );
 	}
 }
