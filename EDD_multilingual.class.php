@@ -46,15 +46,19 @@ class EDD_multilingual {
 	public function edd_ml_init_hooks() {
 		global $wpdb, $sitepress;
 
-		// Save order language
+		// Save order language.
 		add_action( 'edd_insert_payment', array( $this, 'edd_ml_save_payment_language' ), 10 );
 
-		// Synchronize sales and earnings between translations
+		// Add language column to the payments history table.
+		add_filter( 'edd_payments_table_columns', array( $this, 'edd_ml_payments_table_language_column' ) );
+		add_filter( 'edd_payments_table_column', array( $this, 'edd_ml_render_payments_table_column' ), 10, 3 );
+
+		// Synchronize sales and earnings between translations.
 		add_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
 		add_action( 'edd_tools_after', array( $this, 'recalculate_show_link' ) );
 		add_action( 'wp_ajax_edd_recalculate', array( $this, 'recalculate_download_totals' ) );
 
-		// Add back the flags to downloads manager
+		// Add back the flags to downloads manager.
 		add_filter( 'edd_download_columns', array(
 			new WPML_Custom_Columns( $wpdb, $sitepress ),
 			'add_posts_management_column'
@@ -62,7 +66,7 @@ class EDD_multilingual {
 	}
 
 	/**
-	 * Save the language the order was made in.
+	 * Save the language the payment was made in.
 	 *
 	 * @param $payment
 	 */
@@ -75,7 +79,7 @@ class EDD_multilingual {
 	 */
 	public function edd_ml_switch_payment_language() {
 		if ( is_admin() && isset( $_GET['edd-action'] ) && $_GET['edd-action'] == 'email_links' ) {
-			$language_code = get_post_meta( intval( $_GET['purchase_id'] ), 'wpml_language', true );
+			$language_code = $this->edd_ml_get_payment_language( $_GET['purchase_id'] );
 
 			if ( ! empty( $language_code ) ) {
 				do_action( 'wpml_switch_language', $language_code );
@@ -174,5 +178,55 @@ class EDD_multilingual {
 			$edd_options['login_page']          = apply_filters( 'wpml_object_id', $edd_options['login_page'], 'page', true );
 			$edd_options['register_page']       = apply_filters( 'wpml_object_id', $edd_options['register_page'], 'page', true );
 		}
+	}
+
+	/**
+	 * Add "Language" column to the payments table.
+	 *
+	 * @param $columns
+	 *
+	 * @return mixed
+	 */
+	public function edd_ml_payments_table_language_column( $columns ) {
+		$columns['language'] = __( 'Language', 'easy-digital-downloads' );
+
+		return $columns;
+	}
+
+	/**
+	 * Fill payments table "Language" column with payment languages presented as flags.
+	 *
+	 * @param $value
+	 * @param $payment_id
+	 * @param $column_name
+	 *
+	 * @return string
+	 */
+	public function edd_ml_render_payments_table_column( $value, $payment_id, $column_name ) {
+		if ( $column_name === 'language' ) {
+			$language_code = $this->edd_ml_get_payment_language( $payment_id );
+			$languages     = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
+
+			if ( array_key_exists( $language_code, $languages ) ) {
+				$language_data = $languages[ $language_code ];
+
+				$value = '<img src="' . $language_data['country_flag_url'] . '" height="12" width="18" />';
+			} else {
+				$value = __( 'N/A', 'edd_multilingual' );
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Retrieving payment language from post_meta table.
+	 *
+	 * @param $payment_id
+	 *
+	 * @return String
+	 */
+	public function edd_ml_get_payment_language( $payment_id ) {
+		return get_post_meta( intval( $payment_id ), 'wpml_language', true );
 	}
 }
