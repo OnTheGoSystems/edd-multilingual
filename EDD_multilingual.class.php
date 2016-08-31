@@ -63,6 +63,16 @@ class EDD_multilingual {
 			new WPML_Custom_Columns( $wpdb, $sitepress ),
 			'add_posts_management_column'
 		) );
+
+		// Remove WPML header for some admin pages.
+		if ( isset( $_GET['page'] ) && in_array( $_GET['page'], array(
+				'edd-payment-history',
+				'edd-discounts',
+				'edd-settings'
+			) )
+		) {
+			add_action( 'init', array( $this, 'edd_ml_remove_wpml_language_filter' ) );
+		}
 	}
 
 	/**
@@ -85,6 +95,15 @@ class EDD_multilingual {
 				do_action( 'wpml_switch_language', $language_code );
 			}
 		}
+	}
+
+	/**
+	 * Remove WPML post count per language in admin page header.
+	 */
+	public function edd_ml_remove_wpml_language_filter() {
+		global $sitepress;
+
+		remove_action( 'admin_enqueue_scripts', array( $sitepress, 'language_filter' ) );
 	}
 
 	function synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
