@@ -55,8 +55,8 @@ class EDD_multilingual {
 
 		// Synchronize sales and earnings between translations.
 		add_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
-		add_action( 'edd_tools_after', array( $this, 'recalculate_show_link' ) );
-		add_action( 'wp_ajax_edd_recalculate', array( $this, 'recalculate_download_totals' ) );
+		add_action( 'edd_tools_recount_stats_after', array( $this, 'edd_ml_recount_stats' ) );
+		add_action( 'wp_ajax_edd_recalculate', array( $this, 'edd_ml_recalculate_download_totals' ) );
 
 		// Add back the flags to downloads manager.
 		add_filter( 'edd_download_columns', array(
@@ -106,72 +106,114 @@ class EDD_multilingual {
 		remove_action( 'admin_enqueue_scripts', array( $sitepress, 'language_filter' ) );
 	}
 
-	function synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
-		global $sitepress;
+	/**
+	 *
+	 * Synchronize download totals
+	 *
+	 * @param $null
+	 * @param $object_id
+	 * @param $meta_key
+	 * @param $meta_value
+	 * @param $prev_value
+	 *
+	 * @return null
+	 */
+	public function synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
+		if ( in_array( $meta_key, array( '_edd_download_sales', '_edd_download_earnings' ) ) ) {
+			remove_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
+			$languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0' );
 
-		if (in_array($meta_key, array('_edd_download_sales', '_edd_download_earnings'))) {
-			remove_filter('update_post_metadata', array($this, 'synchronize_download_totals'), 10, 5);
-			$languages = icl_get_languages('skip_missing=0');
-			foreach ($languages as $lang) {
-				if ($lang['language_code'] != $sitepress->get_current_language()) {
-					$post_id = icl_object_id($object_id, 'download', false, $lang['language_code']);
-					update_post_meta($post_id, $meta_key, $meta_value);
+			foreach ( $languages as $lang ) {
+				if ( $lang['language_code'] != apply_filters( 'wpml_current_language', null ) ) {
+					$post_id = apply_filters( 'wpml_object_id', $object_id, 'download', false, $lang['language_code'] );
+					update_post_meta( $post_id, $meta_key, $meta_value );
 				}
 			}
-			add_filter('update_post_metadata', array($this, 'synchronize_download_totals'), 10, 5);
+
+			add_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
 		}
+
 		return null;
 	}
 
-	function recalculate_show_link() {
-	?>
-	<div id="edd_ml_recalculate">
-		<a class="button" href="#recalculate">Recalculate totals</a>
-	</div>
-	<script type="text/javascript">
-	jQuery(function($){
-		$('#edd_ml_recalculate a').click(function() {
-			$('#edd_ml_recalculate a').attr('disabled', 'disabled');
-			$.post(ajaxurl, {action:"edd_recalculate"},function(){
-				$('#edd_ml_recalculate a').removeAttr('disabled');
-				$('#edd_ml_recalculate').append('<span>done!</span>');
-				setTimeout(function() {
-					$('#edd_ml_recalculate span').fadeOut('slow');
-				}, 1000);
+	/**
+	 * Display multilingual recount option in EDD > Tools
+	 */
+	public function edd_ml_recount_stats() {
+		?>
+		<div class="postbox">
+			<h3><span><?php _e( 'EDD Multilingual - Recount Stats', 'easy-digital-downloads' ); ?></span></h3>
+			<div class="inside recount-stats-controls">
+				<div id="edd_ml_recalculate">
+					<a class="button" href="#recalculate">Recalculate totals</a>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			jQuery(function ($) {
+				var recalculate = $('#edd_ml_recalculate');
+
+				recalculate.find('a').click(function () {
+					recalculate.find('a').attr('disabled', 'disabled');
+					$.post(
+						ajaxurl, {
+							action: "edd_recalculate"
+						}, function (response) {
+							recalculate.find('a').removeAttr('disabled');
+							recalculate.append(
+								'<div class="notice-wrap"><div id="edd-batch-success" class="updated notice is-dismissible"><p>' +
+								response +
+								'<span class="notice-dismiss"></span></p></div></div>'
+							);
+							$('.notice-dismiss').click(function () {
+								$('.notice-wrap').slideUp('slow', function () {
+									this.remove();
+								});
+							})
+						});
+				});
 			});
-			return false;
-		});
-	});
-	</script>
-	<?php
+		</script>
+		<?php
 	}
 
-	function recalculate_download_totals() {
-		global $wpdb, $sitepress;
+	/**
+	 * Recalculate download totals from EED > Reports
+	 */
+	public function edd_ml_recalculate_download_totals() {
+		global $wpdb;
 
-		$wpdb->query("UPDATE $wpdb->postmeta SET meta_value = '0' WHERE meta_key IN ('_edd_download_earnings', '_edd_download_sales')");
-		$logs = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_type = 'edd_log'");
-		foreach ($logs as $log) {
+		$wpdb->query( "UPDATE $wpdb->postmeta 
+					   SET meta_value = '0' 
+					   WHERE meta_key 
+					   IN ('_edd_download_earnings', '_edd_download_sales')" );
+		$logs = $wpdb->get_results( "SELECT * FROM $wpdb->posts WHERE post_type = 'edd_log'" );
+
+		foreach ( $logs as $log ) {
 			$payment_id = get_post_meta( $log->ID, '_edd_log_payment_id', true );
-			$lang = get_post_meta( $payment_id, 'wpml_language', true);
-			if (empty($lang)) {
-				$lang = $sitepress->get_default_language();
+			$language   = get_post_meta( $payment_id, 'wpml_language', true );
+
+			if ( empty( $language ) ) {
+				$language = apply_filters( 'wpml_default_language', null );
 			}
-			if (get_post($payment_id)) {
+
+			if ( get_post( $payment_id ) ) {
 				$cart_items = edd_get_payment_meta_cart_details( $payment_id );
-				$amount     = 0;
+
 				if ( is_array( $cart_items ) ) {
 					foreach ( $cart_items as $item ) {
-						$sitepress->switch_lang($lang);
-						edd_increase_earnings($item['id'], $item['price']);
-						edd_increase_purchase_count($item['id']);
-						$sitepress->switch_lang();
+						do_action( 'wpml_switch_language', $language );
+
+						edd_increase_earnings( $item['id'], $item['price'] );
+						edd_increase_purchase_count( $item['id'] );
+
+						do_action( 'wpml_switch_language', null );
 					}
 				}
 			}
 		}
 
-		die('1');
+		die( 'Successfully recalculated totals!' );
 	}
 
 	/**
