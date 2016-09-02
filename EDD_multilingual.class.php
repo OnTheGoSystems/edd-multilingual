@@ -23,6 +23,14 @@ class EDD_multilingual {
 			return;
 		}
 
+		// WPML setup has to be finished
+		if ( ! apply_filters( 'wpml_setting', false, 'setup_complete' ) ) {
+			add_action( 'admin_notices', array( $this, 'edd_ml_error_wpml_setup' ) );
+
+			return;
+		}
+
+
 		$this->edd_ml_init_hooks();
 		$this->edd_ml_switch_payment_language();
 		$this->edd_ml_translate_page_ids();
@@ -35,9 +43,17 @@ class EDD_multilingual {
 		$message = __( '%s plugin is enabled but not effective. It requires %s and %s plugins in order to work.', 'edd_multilingual' );
 		echo '<div class="error"><p>' .
 			 sprintf( $message, '<strong>EDD multilingual</strong>',
-				 				'<a href="http://wpml.org/">WPML</a>',
-				 				'<a href="https://wordpress.org/plugins/easy-digital-downloads/">Easy Digital Downloads</a>' ) .
+				 '<a href="http://wpml.org/">WPML</a>',
+				 '<a href="https://wordpress.org/plugins/easy-digital-downloads/">Easy Digital Downloads</a>' ) .
 			 '</p></div>';
+	}
+
+	/**
+	 * Error message if WPML setup is not finished.
+	 */
+	public function edd_ml_error_wpml_setup() {
+		$message = __( '%s plugin is enabled but not effective. You have to finish WPML setup.', 'edd_multilingual' );
+		echo '<div class="error"><p>' . sprintf( $message, '<strong>EDD multilingual</strong>' ) . '</p></div>';
 	}
 
 	/**
