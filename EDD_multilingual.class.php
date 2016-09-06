@@ -30,7 +30,6 @@ class EDD_multilingual {
 			return;
 		}
 
-
 		$this->edd_ml_init_hooks();
 		$this->edd_ml_switch_payment_language();
 		$this->edd_ml_translate_page_ids();
@@ -70,7 +69,7 @@ class EDD_multilingual {
 		add_filter( 'edd_payments_table_column', array( $this, 'edd_ml_render_payments_table_column' ), 10, 3 );
 
 		// Synchronize sales and earnings between translations.
-		add_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
+		add_filter( 'update_post_metadata', array( $this, 'edd_ml_synchronize_download_totals' ), 10, 5 );
 		add_action( 'edd_tools_recount_stats_after', array( $this, 'edd_ml_recount_stats' ) );
 		add_action( 'wp_ajax_edd_recalculate', array( $this, 'edd_ml_recalculate_download_totals' ) );
 
@@ -134,7 +133,7 @@ class EDD_multilingual {
 	 *
 	 * @return null
 	 */
-	public function synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
+	public function edd_ml_synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
 		if ( in_array( $meta_key, array( '_edd_download_sales', '_edd_download_earnings' ) ) ) {
 			remove_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
 			$languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0' );
@@ -170,19 +169,22 @@ class EDD_multilingual {
 				var recalculate = $('#edd_ml_recalculate');
 
 				recalculate.find('a').click(function () {
+					var notice = $('.notice-wrap');
+
 					recalculate.find('a').attr('disabled', 'disabled');
 					$.post(
 						ajaxurl, {
 							action: "edd_recalculate"
 						}, function (response) {
 							recalculate.find('a').removeAttr('disabled');
+							notice.remove();
 							recalculate.append(
 								'<div class="notice-wrap"><div id="edd-batch-success" class="updated notice is-dismissible"><p>' +
 								response +
 								'<span class="notice-dismiss"></span></p></div></div>'
 							);
 							$('.notice-dismiss').click(function () {
-								$('.notice-wrap').slideUp('slow', function () {
+								notice.slideUp('slow', function () {
 									this.remove();
 								});
 							})
@@ -228,6 +230,11 @@ class EDD_multilingual {
 				}
 			}
 		}
+		// Delete all transients so that stats can be refreshed.
+		$wpdb->query( "DELETE FROM $wpdb->options 
+					   WHERE option_name 
+					   LIKE '%edd_stats_%'
+					   OR option_name LIKE '%edd_estimated_monthly_stats%'" );
 
 		die( 'Successfully recalculated totals!' );
 	}
