@@ -1,56 +1,55 @@
 <?php
-
 /**
  * Main plugin class.
  */
-class EDD_multilingual {
+class EDD_Multilingual {
 
 	/**
-	 * EDD_multilingual constructor.
+	 * EDD_Multilingual constructor.
 	 */
 	public function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'edd_ml_init' ), 20 );
+		add_action( 'plugins_loaded', array( $this, 'init' ), 20 );
 	}
 
 	/**
 	 * Initialize plugin.
 	 */
-	public function edd_ml_init() {
-		// Sanity check
+	public function init() {
+		// Sanity check.
 		if ( ! defined( 'ICL_SITEPRESS_VERSION' ) || ! defined( 'EDD_VERSION' ) ) {
-			add_action( 'admin_notices', array( $this, 'edd_ml_error_no_plugins' ) );
+			add_action( 'admin_notices', array( $this, 'error_no_plugins' ) );
 
 			return;
 		}
 
-		// WPML setup has to be finished
+		// WPML setup has to be finished.
 		if ( ! apply_filters( 'wpml_setting', false, 'setup_complete' ) ) {
-			add_action( 'admin_notices', array( $this, 'edd_ml_error_wpml_setup' ) );
+			add_action( 'admin_notices', array( $this, 'error_wpml_setup' ) );
 
 			return;
 		}
 
-		$this->edd_ml_init_hooks();
-		$this->edd_ml_switch_payment_language();
-		$this->edd_ml_translate_page_ids();
+		$this->init_hooks();
+		$this->switch_payment_language();
+		$this->translate_page_ids();
 	}
 
 	/**
 	 * Error message if requirements not met.
 	 */
-	public function edd_ml_error_no_plugins() {
+	public function error_no_plugins() {
 		$message = __( '%s plugin is enabled but not effective. It requires %s and %s plugins in order to work.', 'edd_multilingual' );
 		echo '<div class="error"><p>' .
 			 sprintf( $message, '<strong>EDD multilingual</strong>',
-				 '<a href="http://wpml.org/">WPML</a>',
-				 '<a href="https://wordpress.org/plugins/easy-digital-downloads/">Easy Digital Downloads</a>' ) .
+				                '<a href="http://wpml.org/">WPML</a>',
+				                '<a href="https://wordpress.org/plugins/easy-digital-downloads/">Easy Digital Downloads</a>' ) .
 			 '</p></div>';
 	}
 
 	/**
 	 * Error message if WPML setup is not finished.
 	 */
-	public function edd_ml_error_wpml_setup() {
+	public function error_wpml_setup() {
 		$message = __( '%s plugin is enabled but not effective. You have to finish WPML setup.', 'edd_multilingual' );
 		echo '<div class="error"><p>' . sprintf( $message, '<strong>EDD multilingual</strong>' ) . '</p></div>';
 	}
@@ -58,20 +57,20 @@ class EDD_multilingual {
 	/**
 	 * Load plugin hooks.
 	 */
-	public function edd_ml_init_hooks() {
+	public function init_hooks() {
 		global $wpdb, $sitepress;
 
 		// Save order language.
-		add_action( 'edd_insert_payment', array( $this, 'edd_ml_save_payment_language' ), 10 );
+		add_action( 'edd_insert_payment', array( $this, 'save_payment_language' ), 10 );
 
 		// Add language column to the payments history table.
-		add_filter( 'edd_payments_table_columns', array( $this, 'edd_ml_payments_table_language_column' ) );
-		add_filter( 'edd_payments_table_column', array( $this, 'edd_ml_render_payments_table_column' ), 10, 3 );
+		add_filter( 'edd_payments_table_columns', array( $this, 'payments_table_language_column' ) );
+		add_filter( 'edd_payments_table_column', array( $this, 'render_payments_table_column' ), 10, 3 );
 
 		// Synchronize sales and earnings between translations.
-		add_filter( 'update_post_metadata', array( $this, 'edd_ml_synchronize_download_totals' ), 10, 5 );
-		add_action( 'edd_tools_recount_stats_after', array( $this, 'edd_ml_recount_stats' ) );
-		add_action( 'wp_ajax_edd_recalculate', array( $this, 'edd_ml_recalculate_download_totals' ) );
+		add_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
+		add_action( 'edd_tools_recount_stats_after', array( $this, 'recount_stats' ) );
+		add_action( 'wp_ajax_edd_recalculate', array( $this, 'recalculate_download_totals' ) );
 
 		// Add back the flags to downloads manager.
 		add_filter( 'edd_download_columns', array(
@@ -86,7 +85,7 @@ class EDD_multilingual {
 				'edd-settings'
 			) )
 		) {
-			add_action( 'init', array( $this, 'edd_ml_remove_wpml_language_filter' ) );
+			add_action( 'init', array( $this, 'remove_wpml_language_filter' ) );
 		}
 	}
 
@@ -95,16 +94,16 @@ class EDD_multilingual {
 	 *
 	 * @param $payment
 	 */
-	public function edd_ml_save_payment_language( $payment ) {
+	public function save_payment_language( $payment ) {
 		update_post_meta( $payment, 'wpml_language', apply_filters( 'wpml_current_language', null ) );
 	}
 
 	/**
 	 * Send email notifications in the correct language.
 	 */
-	public function edd_ml_switch_payment_language() {
+	public function switch_payment_language() {
 		if ( is_admin() && isset( $_GET['edd-action'] ) && $_GET['edd-action'] == 'email_links' ) {
-			$language_code = self::edd_ml_get_payment_language( $_GET['purchase_id'] );
+			$language_code = self::get_payment_language( $_GET['purchase_id'] );
 
 			if ( ! empty( $language_code ) ) {
 				do_action( 'wpml_switch_language', $language_code );
@@ -115,7 +114,7 @@ class EDD_multilingual {
 	/**
 	 * Remove WPML post count per language in admin page header.
 	 */
-	public function edd_ml_remove_wpml_language_filter() {
+	public function remove_wpml_language_filter() {
 		global $sitepress;
 
 		remove_action( 'admin_enqueue_scripts', array( $sitepress, 'language_filter' ) );
@@ -133,7 +132,7 @@ class EDD_multilingual {
 	 *
 	 * @return null
 	 */
-	public function edd_ml_synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
+	public function synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
 		if ( in_array( $meta_key, array( '_edd_download_sales', '_edd_download_earnings' ) ) ) {
 			remove_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
 			$languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0' );
@@ -154,7 +153,7 @@ class EDD_multilingual {
 	/**
 	 * Display multilingual recount option in EDD > Tools
 	 */
-	public function edd_ml_recount_stats() {
+	public function recount_stats() {
 		?>
 		<div class="postbox">
 			<h3><span><?php _e( 'EDD Multilingual - Recount Stats', 'easy-digital-downloads' ); ?></span></h3>
@@ -198,7 +197,7 @@ class EDD_multilingual {
 	/**
 	 * Recalculate download totals from EED > Reports
 	 */
-	public function edd_ml_recalculate_download_totals() {
+	public function recalculate_download_totals() {
 		global $wpdb;
 
 		$wpdb->query( "UPDATE $wpdb->postmeta 
@@ -239,20 +238,20 @@ class EDD_multilingual {
 		die( 'Successfully recalculated totals!' );
 	}
 
-    /**
-     * Translate EDD page IDs.
-     */
-    public function edd_ml_translate_page_ids() {
-        global $edd_options;
+	/**
+	 * Translate EDD page IDs.
+	 */
+	public function translate_page_ids() {
+		global $edd_options;
 
-        // Re-read settings because EDD reads them before WPML has hooked onto the filters
-        $edd_options = edd_get_settings();
+		// Re-read settings because EDD reads them before WPML has hooked onto the filters.
+		$edd_options = edd_get_settings();
 
-        // Translate post_id for pages in options
-        $edd_options['purchase_page'] = apply_filters( 'wpml_object_id', $edd_options['purchase_page'], 'page', true );
-        $edd_options['success_page']  = apply_filters( 'wpml_object_id', $edd_options['success_page'], 'page', true );
-        $edd_options['failure_page']  = apply_filters( 'wpml_object_id', $edd_options['failure_page'], 'page', true );
-    }
+		// Translate post_id for pages in options.
+		$edd_options['purchase_page'] = apply_filters( 'wpml_object_id', $edd_options['purchase_page'], 'page', true );
+		$edd_options['success_page']  = apply_filters( 'wpml_object_id', $edd_options['success_page'], 'page', true );
+		$edd_options['failure_page']  = apply_filters( 'wpml_object_id', $edd_options['failure_page'], 'page', true );
+	}
 
 	/**
 	 * Add "Language" column to the payments table.
@@ -261,7 +260,7 @@ class EDD_multilingual {
 	 *
 	 * @return mixed
 	 */
-	public function edd_ml_payments_table_language_column( $columns ) {
+	public function payments_table_language_column( $columns ) {
 		$columns['language'] = __( 'Language', 'easy-digital-downloads' );
 
 		return $columns;
@@ -276,18 +275,19 @@ class EDD_multilingual {
 	 *
 	 * @return string
 	 */
-	public function edd_ml_render_payments_table_column( $value, $payment_id, $column_name ) {
+	public function render_payments_table_column( $value, $payment_id, $column_name ) {
 		if ( $column_name === 'language' ) {
-			$language_code = self::edd_ml_get_payment_language( $payment_id );
+			$language_code = self::get_payment_language( $payment_id );
 			$languages     = apply_filters( 'wpml_active_languages', null, 'orderby=id&order=desc' );
 
 			if ( array_key_exists( $language_code, $languages ) ) {
 				$language_data = $languages[ $language_code ];
 
 				$value = '<img src="' . $language_data['country_flag_url'] . '" height="12" width="18" />';
-			} else {
-				$value = __( 'N/A', 'edd_multilingual' );
+				return $value;
 			}
+
+			$value = __( 'N/A', 'edd_multilingual' );
 		}
 
 		return $value;
@@ -300,7 +300,7 @@ class EDD_multilingual {
 	 *
 	 * @return String
 	 */
-	public static function edd_ml_get_payment_language( $payment_id ) {
+	public static function get_payment_language( $payment_id ) {
 		return get_post_meta( intval( $payment_id ), 'wpml_language', true );
 	}
 }
