@@ -1,0 +1,24 @@
+---
+engines:
+  phpcodesniffer:
+    enabled: true
+    config:
+      standard: "Wordpress"
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - javascript
+      - php
+  fixme:
+    enabled: true
+  phpmd:
+    enabled: true
+ratings:
+  paths:
+  - "**.css"
+  - "**.js"
+  - "**.php"
+exclude_paths: []
