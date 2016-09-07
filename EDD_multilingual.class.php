@@ -239,30 +239,20 @@ class EDD_multilingual {
 		die( 'Successfully recalculated totals!' );
 	}
 
-	/**
-	 * Translate EDD page IDs.
-	 */
-	public function edd_ml_translate_page_ids() {
-		global $edd_options;
+    /**
+     * Translate EDD page IDs.
+     */
+    public function edd_ml_translate_page_ids() {
+        global $edd_options;
 
-		// Re-read settings because EDD reads them before WPML has hooked onto the filters
-		$edd_options = edd_get_settings();
+        // Re-read settings because EDD reads them before WPML has hooked onto the filters
+        $edd_options = edd_get_settings();
 
-		// Translate post_id for pages in options
-		$edd_options['purchase_page'] = apply_filters( 'wpml_object_id', $edd_options['purchase_page'], 'page', true );
-		$edd_options['success_page']  = apply_filters( 'wpml_object_id', $edd_options['success_page'], 'page', true );
-		$edd_options['failure_page']  = apply_filters( 'wpml_object_id', $edd_options['failure_page'], 'page', true );
-
-		// Crowdfunding plugin
-		if ( class_exists( 'ATCF_CrowdFunding' ) ) {
-			$edd_options['faq_page']            = apply_filters( 'wpml_object_id', $edd_options['faq_page'], 'page', true );
-			$edd_options['submit_page']         = apply_filters( 'wpml_object_id', $edd_options['submit_page'], 'page', true );
-			$edd_options['submit_success_page'] = apply_filters( 'wpml_object_id', $edd_options['submit_success_page'], 'page', true );
-			$edd_options['profile_page']        = apply_filters( 'wpml_object_id', $edd_options['profile_page'], 'page', true );
-			$edd_options['login_page']          = apply_filters( 'wpml_object_id', $edd_options['login_page'], 'page', true );
-			$edd_options['register_page']       = apply_filters( 'wpml_object_id', $edd_options['register_page'], 'page', true );
-		}
-	}
+        // Translate post_id for pages in options
+        $edd_options['purchase_page'] = apply_filters( 'wpml_object_id', $edd_options['purchase_page'], 'page', true );
+        $edd_options['success_page']  = apply_filters( 'wpml_object_id', $edd_options['success_page'], 'page', true );
+        $edd_options['failure_page']  = apply_filters( 'wpml_object_id', $edd_options['failure_page'], 'page', true );
+    }
 
 	/**
 	 * Add "Language" column to the payments table.
