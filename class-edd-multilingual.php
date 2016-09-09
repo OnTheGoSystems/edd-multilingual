@@ -67,11 +67,6 @@ class EDD_Multilingual {
 		add_filter( 'edd_payments_table_columns', array( $this, 'payments_table_language_column' ) );
 		add_filter( 'edd_payments_table_column', array( $this, 'render_payments_table_column' ), 10, 3 );
 
-		// Synchronize sales and earnings between translations.
-		add_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
-		add_action( 'edd_tools_recount_stats_after', array( $this, 'recount_stats' ) );
-		add_action( 'wp_ajax_edd_recalculate', array( $this, 'recalculate_download_totals' ) );
-
 		// Add back the flags to downloads manager.
 		add_filter( 'edd_download_columns', array(
 			new WPML_Custom_Columns( $wpdb, $sitepress ),
@@ -118,124 +113,6 @@ class EDD_Multilingual {
 		global $sitepress;
 
 		remove_action( 'admin_enqueue_scripts', array( $sitepress, 'language_filter' ) );
-	}
-
-	/**
-	 *
-	 * Synchronize download totals
-	 *
-	 * @param $null
-	 * @param $object_id
-	 * @param $meta_key
-	 * @param $meta_value
-	 * @param $prev_value
-	 *
-	 * @return null
-	 */
-	public function synchronize_download_totals( $null, $object_id, $meta_key, $meta_value, $prev_value ) {
-		if ( in_array( $meta_key, array( '_edd_download_sales', '_edd_download_earnings' ) ) ) {
-			remove_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
-			$languages = apply_filters( 'wpml_active_languages', null, 'skip_missing=0' );
-
-			foreach ( $languages as $lang ) {
-				if ( $lang['language_code'] != apply_filters( 'wpml_current_language', null ) ) {
-					$post_id = apply_filters( 'wpml_object_id', $object_id, 'download', false, $lang['language_code'] );
-					update_post_meta( $post_id, $meta_key, $meta_value );
-				}
-			}
-
-			add_filter( 'update_post_metadata', array( $this, 'synchronize_download_totals' ), 10, 5 );
-		}
-
-		return null;
-	}
-
-	/**
-	 * Display multilingual recount option in EDD > Tools
-	 */
-	public function recount_stats() {
-		?>
-		<div class="postbox">
-			<h3><span><?php _e( 'EDD Multilingual - Recount Stats', 'easy-digital-downloads' ); ?></span></h3>
-			<div class="inside recount-stats-controls">
-				<div id="edd_ml_recalculate">
-					<a class="button" href="#recalculate">Recalculate totals</a>
-				</div>
-			</div>
-		</div>
-		<script type="text/javascript">
-			jQuery(function ($) {
-				var recalculate = $('#edd_ml_recalculate');
-
-				recalculate.find('a').click(function () {
-					var notice = $('.notice-wrap');
-
-					recalculate.find('a').attr('disabled', 'disabled');
-					$.post(
-						ajaxurl, {
-							action: "edd_recalculate"
-						}, function (response) {
-							recalculate.find('a').removeAttr('disabled');
-							notice.remove();
-							recalculate.append(
-								'<div class="notice-wrap"><div id="edd-batch-success" class="updated notice is-dismissible"><p>' +
-								response +
-								'<span class="notice-dismiss"></span></p></div></div>'
-							);
-							$('.notice-dismiss').click(function () {
-								notice.slideUp('slow', function () {
-									this.remove();
-								});
-							})
-						});
-				});
-			});
-		</script>
-		<?php
-	}
-
-	/**
-	 * Recalculate download totals from EED > Reports
-	 */
-	public function recalculate_download_totals() {
-		global $wpdb;
-
-		$wpdb->query( "UPDATE $wpdb->postmeta 
-					   SET meta_value = '0' 
-					   WHERE meta_key 
-					   IN ('_edd_download_earnings', '_edd_download_sales')" );
-		$logs = $wpdb->get_results( "SELECT * FROM $wpdb->posts WHERE post_type = 'edd_log'" );
-
-		foreach ( $logs as $log ) {
-			$payment_id = get_post_meta( $log->ID, '_edd_log_payment_id', true );
-			$language   = get_post_meta( $payment_id, 'wpml_language', true );
-
-			if ( empty( $language ) ) {
-				$language = apply_filters( 'wpml_default_language', null );
-			}
-
-			if ( get_post( $payment_id ) ) {
-				$cart_items = edd_get_payment_meta_cart_details( $payment_id );
-
-				if ( is_array( $cart_items ) ) {
-					foreach ( $cart_items as $item ) {
-						do_action( 'wpml_switch_language', $language );
-
-						edd_increase_earnings( $item['id'], $item['price'] );
-						edd_increase_purchase_count( $item['id'] );
-
-						do_action( 'wpml_switch_language', null );
-					}
-				}
-			}
-		}
-		// Delete all transients so that stats can be refreshed.
-		$wpdb->query( "DELETE FROM $wpdb->options 
-					   WHERE option_name 
-					   LIKE '%edd_stats_%'
-					   OR option_name LIKE '%edd_estimated_monthly_stats%'" );
-
-		die( 'Successfully recalculated totals!' );
 	}
 
 	/**

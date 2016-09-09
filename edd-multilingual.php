@@ -6,6 +6,7 @@ Description: A plugin to enable seamless integration between Easy Digital Downlo
 Version: 1.2.2
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com/
+Text Domain: edd_multilingual
 */
 
 if ( defined( 'EDD_MULTILINGUAL_VERSION' ) ) {
