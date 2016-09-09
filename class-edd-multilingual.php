@@ -67,7 +67,7 @@ class EDD_Multilingual {
 		add_filter( 'edd_payments_table_columns', array( $this, 'payments_table_language_column' ) );
 		add_filter( 'edd_payments_table_column', array( $this, 'render_payments_table_column' ), 10, 3 );
 
-		// Add back the flags to downloads manager.
+		// Add back the flags to downloads manager. NOTE: Not working when EDD FES is used.
 		add_filter( 'edd_download_columns', array(
 			new WPML_Custom_Columns( $wpdb, $sitepress ),
 			'add_posts_management_column'
@@ -125,9 +125,20 @@ class EDD_Multilingual {
 		$edd_options = edd_get_settings();
 
 		// Translate post_id for pages in options.
-		$edd_options['purchase_page'] = apply_filters( 'wpml_object_id', $edd_options['purchase_page'], 'page', true );
-		$edd_options['success_page']  = apply_filters( 'wpml_object_id', $edd_options['success_page'], 'page', true );
-		$edd_options['failure_page']  = apply_filters( 'wpml_object_id', $edd_options['failure_page'], 'page', true );
+		isset( $edd_options['purchase_page'] ) ? $edd_options['purchase_page'] = apply_filters( 'wpml_object_id', $edd_options['purchase_page'], 'page', true ) : '';
+		isset( $edd_options['success_page'] ) ? $edd_options['success_page']  = apply_filters( 'wpml_object_id', $edd_options['success_page'], 'page', true ) : '';
+		isset( $edd_options['failure_page'] ) ? $edd_options['failure_page']  = apply_filters( 'wpml_object_id', $edd_options['failure_page'], 'page', true ) : '';
+		isset( $edd_options['purchase_history_page'] ) ? $edd_options['purchase_history_page']  = apply_filters( 'wpml_object_id', $edd_options['purchase_history_page'], 'page', true ) : '';
+		isset( $edd_options['login_redirect_page'] ) ? $edd_options['login_redirect_page']  = apply_filters( 'wpml_object_id', $edd_options['login_redirect_page'], 'page', true ) : '';
+
+		// Translate post_id for edd-fes add-on.
+		isset( $edd_options['fes-vendor-dashboard-page'] ) ? $edd_options['fes-vendor-dashboard-page'] = apply_filters( 'wpml_object_id', $edd_options['fes-vendor-dashboard-page'], 'page', true ) : '';
+		isset( $edd_options['fes-vendor-page'] ) ? $edd_options['fes-vendor-page'] = apply_filters( 'wpml_object_id', $edd_options['fes-vendor-page'], 'page', true ) : '';
+		isset( $edd_options['fes-submission-form'] ) ? $edd_options['fes-submission-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-submission-form'], 'page', true ) : '';
+		isset( $edd_options['fes-profile-form'] ) ? $edd_options['fes-profile-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-profile-form'], 'page', true ) : '';
+		isset( $edd_options['fes-login-form'] ) ? $edd_options['fes-login-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-login-form'], 'page', true ) : '';
+		isset( $edd_options['fes-registration-form'] ) ? $edd_options['fes-registration-form']  = apply_filters( 'wpml_object_id', $edd_options['fes-registration-form'], 'page', true ) : '';
+		isset( $edd_options['fes-vendor-contact-form'] ) ? $edd_options['fes-vendor-contact-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-vendor-contact-form'], 'page', true ) : '';
 	}
 
 	/**
