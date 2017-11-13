@@ -128,6 +128,13 @@ class EDD_Multilingual {
 		$edd_options['purchase_page'] = apply_filters( 'wpml_object_id', $edd_options['purchase_page'], 'page', true );
 		$edd_options['success_page']  = apply_filters( 'wpml_object_id', $edd_options['success_page'], 'page', true );
 		$edd_options['failure_page']  = apply_filters( 'wpml_object_id', $edd_options['failure_page'], 'page', true );
+
+		// Translate post_id for edd-fes.
+		$edd_options['fes-submission-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-submission-form'], 'page', true );
+		$edd_options['fes-registration-form']  = apply_filters( 'wpml_object_id', $edd_options['fes-registration-form'], 'page', true );
+		$edd_options['fes-profile-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-profile-form'], 'page', true );
+		$edd_options['fes-login-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-login-form'], 'page', true );
+		$edd_options['fes-vendor-contact-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-vendor-contact-form'], 'page', true );
 	}
 
 	/**
