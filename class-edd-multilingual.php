@@ -82,6 +82,9 @@ class EDD_Multilingual {
 		) {
 			add_action( 'init', array( $this, 'remove_wpml_language_filter' ) );
 		}
+
+		// Support for 'Checkout Fields Manager' extension.
+		add_filter( 'option_cfm-checkout-form', array( $this, 'translate_checkout_fields_id' ) );
 	}
 
 	/**
@@ -139,6 +142,13 @@ class EDD_Multilingual {
 		isset( $edd_options['fes-login-form'] ) ? $edd_options['fes-login-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-login-form'], 'page', true ) : '';
 		isset( $edd_options['fes-registration-form'] ) ? $edd_options['fes-registration-form']  = apply_filters( 'wpml_object_id', $edd_options['fes-registration-form'], 'page', true ) : '';
 		isset( $edd_options['fes-vendor-contact-form'] ) ? $edd_options['fes-vendor-contact-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-vendor-contact-form'], 'page', true ) : '';
+	}
+
+	/**
+	 * Translate the post_id for checkout fields.
+	 */
+	function translate_checkout_fields_id( $id ) {
+		return apply_filters( 'wpml_object_id', $id, 'edd-checkout-fields', true );
 	}
 
 	/**

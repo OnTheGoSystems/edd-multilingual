@@ -14,6 +14,9 @@
         <custom-field action="copy">_edd_purchase_color</custom-field>
         <custom-field action="translate">_edd_purchase_text</custom-field>
         <custom-field action="translate">edd_product_notes</custom-field>
+        <custom-field action="translate">cfm-form</custom-field>
+        <custom-field action="copy">cfm-form-class</custom-field>
+        <custom-field action="copy">cfm-form-name</custom-field>
     </custom-fields>
     <taxonomies>
         <taxonomy translate="1">download_category</taxonomy>
