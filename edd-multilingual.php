@@ -13,7 +13,7 @@ if ( defined( 'EDD_MULTILINGUAL_VERSION' ) ) {
 	return;
 }
 
-define( 'EDD_MULTILINGUAL_VERSION', '1.3.2' );
+define( 'EDD_MULTILINGUAL_VERSION', '1.3.3' );
 define( 'EDD_MULTILINGUAL_PATH', dirname( __FILE__ ) );
 
 require EDD_MULTILINGUAL_PATH . '/class-edd-multilingual.php';

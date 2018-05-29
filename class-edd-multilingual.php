@@ -69,7 +69,7 @@ class EDD_Multilingual {
 
 		// Add back the flags to downloads manager. NOTE: Not working when EDD FES is used.
 		add_filter( 'edd_download_columns', array(
-			new WPML_Custom_Columns( $wpdb, $sitepress ),
+			new WPML_Custom_Columns( $sitepress ),
 			'add_posts_management_column'
 		) );
 
