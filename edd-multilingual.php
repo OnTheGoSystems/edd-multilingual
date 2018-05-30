@@ -3,7 +3,7 @@
 Plugin Name: Easy Digital Downloads Multilingual
 Plugin URI: https://wordpress.org/plugins/edd-multilingual/
 Description: A plugin to enable seamless integration between Easy Digital Downloads and WPML
-Version: 1.2.2
+Version: 1.3.3
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com/
 Text Domain: edd_multilingual

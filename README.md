@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/license-GPLv2-red.svg?style=flat-squar)
 
 
-Easy Digital Downloads Multilingual is the glue plugin, which is providing seamless integration between [Easy-Digital-Downloads](https://wordpress.org/plugins/easy-digital-downloads/) and WPML.
+Easy Digital Downloads Multilingual is the glue plugin, which is providing seamless integration between [Easy-Digital-Downloads](https://wordpress.org/plugins/easy-digital-downloads/) and [WPML](http://wpml.org).
 
 
 ## Contribute
