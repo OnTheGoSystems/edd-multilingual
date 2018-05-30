@@ -20,6 +20,10 @@ class EDD_Multilingual {
 			add_action( 'admin_notices', array( $this, 'error_no_plugins' ) );
 
 			return;
+		} elseif ( version_compare( ICL_SITEPRESS_VERSION, '4.0', '<' ) ) {
+			add_action( 'admin_notices', array( $this, 'error_wpml_update' ) );
+
+			return;
 		}
 
 		// WPML setup has to be finished.
@@ -44,6 +48,14 @@ class EDD_Multilingual {
 				                '<a href="http://wpml.org/">WPML</a>',
 				                '<a href="https://wordpress.org/plugins/easy-digital-downloads/">Easy Digital Downloads</a>' ) .
 			 '</p></div>';
+	}
+
+	/**
+	 * Error message if WPML is not recent enough.
+	 */
+	public function error_wpml_update() {
+		$message = __( '%s plugin is enabled but not effective. It requires at least WPML 4.0.', 'edd_multilingual' );
+		echo '<div class="error"><p>' . sprintf( $message, '<strong>EDD multilingual</strong>' ) . '</p></div>';
 	}
 
 	/**
