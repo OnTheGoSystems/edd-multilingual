@@ -20,6 +20,10 @@ class EDD_Multilingual {
 			add_action( 'admin_notices', array( $this, 'error_no_plugins' ) );
 
 			return;
+		} elseif ( version_compare( ICL_SITEPRESS_VERSION, '4.0', '<' ) ) {
+			add_action( 'admin_notices', array( $this, 'error_wpml_update' ) );
+
+			return;
 		}
 
 		// WPML setup has to be finished.
@@ -44,6 +48,14 @@ class EDD_Multilingual {
 				                '<a href="http://wpml.org/">WPML</a>',
 				                '<a href="https://wordpress.org/plugins/easy-digital-downloads/">Easy Digital Downloads</a>' ) .
 			 '</p></div>';
+	}
+
+	/**
+	 * Error message if WPML is not recent enough.
+	 */
+	public function error_wpml_update() {
+		$message = __( '%s plugin is enabled but not effective. It requires at least WPML 4.0.', 'edd_multilingual' );
+		echo '<div class="error"><p>' . sprintf( $message, '<strong>EDD multilingual</strong>' ) . '</p></div>';
 	}
 
 	/**
@@ -82,6 +94,9 @@ class EDD_Multilingual {
 		) {
 			add_action( 'init', array( $this, 'remove_wpml_language_filter' ) );
 		}
+
+		// Support for 'Checkout Fields Manager' extension.
+		add_filter( 'option_cfm-checkout-form', array( $this, 'translate_checkout_fields_id' ) );
 	}
 
 	/**
@@ -139,6 +154,13 @@ class EDD_Multilingual {
 		isset( $edd_options['fes-login-form'] ) ? $edd_options['fes-login-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-login-form'], 'page', true ) : '';
 		isset( $edd_options['fes-registration-form'] ) ? $edd_options['fes-registration-form']  = apply_filters( 'wpml_object_id', $edd_options['fes-registration-form'], 'page', true ) : '';
 		isset( $edd_options['fes-vendor-contact-form'] ) ? $edd_options['fes-vendor-contact-form'] = apply_filters( 'wpml_object_id', $edd_options['fes-vendor-contact-form'], 'page', true ) : '';
+	}
+
+	/**
+	 * Translate the post_id for checkout fields.
+	 */
+	function translate_checkout_fields_id( $id ) {
+		return apply_filters( 'wpml_object_id', $id, 'edd-checkout-fields', true );
 	}
 
 	/**
