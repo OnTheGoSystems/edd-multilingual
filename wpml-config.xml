@@ -2,6 +2,7 @@
     <custom-types>
         <custom-type translate="1">download</custom-type>
         <custom-type translate="0">edd_payment</custom-type>
+	<custom-type translate="1" display-as-translated="1">edd-checkout-fields</custom-type>
     </custom-types>
     <custom-fields>
         <custom-field action="ignore">_edd_download_earnings</custom-field>
