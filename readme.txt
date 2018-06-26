@@ -5,7 +5,7 @@ Tags: e-commerce, multilingual, WPML, download, EDD
 License: GPLv2
 Requires at least: 3.1
 Tested up to: 4.9.6
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 
 Easy Digital Downloads Multilingual is the glue plugin, which is providing seamless integration between Easy Digital Downloads and WPML.
 
@@ -33,6 +33,10 @@ This is a glue plugin between EDD and WPML. You need to have both in order for t
 2. Payments history table with languages information
 
 == Changelog ==
+
+= 1.3.4 =
+* Minor fixes
+* Add support for Checkout Fields Manager addon.
 
 = 1.3.3 =
 * Fixed deprecated function signature

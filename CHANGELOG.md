@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [ 1.3.4 ]
+### Fixed
+* Minor fixes
+
+### Added
+* Add support for [Checkout Fields Manager](https://easydigitaldownloads.com/downloads/checkout-fields-manager/) addon.
+
 ## [ 1.3.3 ]
 ### Fixed
 * Fixed deprecated function signature
