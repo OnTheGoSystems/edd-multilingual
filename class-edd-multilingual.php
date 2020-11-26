@@ -70,7 +70,7 @@ class EDD_Multilingual {
 	 * Load plugin hooks.
 	 */
 	public function init_hooks() {
-		global $wpdb, $sitepress;
+		global $sitepress;
 
 		// Save order language.
 		add_action( 'edd_insert_payment', array( $this, 'save_payment_language' ), 10 );
