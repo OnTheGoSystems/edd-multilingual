@@ -18,7 +18,22 @@
         <custom-field action="translate">cfm-form</custom-field>
         <custom-field action="copy">cfm-form-class</custom-field>
         <custom-field action="copy">cfm-form-name</custom-field>
+        <custom-field action="translate">edd_download_files</custom-field>
+        <custom-field action="translate">edd_variable_prices</custom-field>
     </custom-fields>
+    <custom-fields-texts>
+        <key name="edd_download_files">
+            <key name="*">
+                <key name="name" />
+                <key name="file" />
+            </key>
+        </key>
+        <key name="edd_variable_prices">
+            <key name="*">
+                <key name="name" />
+            </key>
+        </key>
+    </custom-fields-texts>
     <taxonomies>
         <taxonomy translate="1">download_category</taxonomy>
         <taxonomy translate="1">download_tag</taxonomy>
