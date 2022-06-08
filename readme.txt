@@ -36,6 +36,9 @@ This is a glue plugin between EDD and WPML. You need to have both in order for t
 
 = 1.4.0 =
 * Bump tested WordPress version.
+* Add a link to our documentation.
+* Fix removing language quicklinks from Settings, Discounts & Payments.
+* Allow translating downloadable files and price variations.
 
 = 1.3.4 =
 * Minor fixes
