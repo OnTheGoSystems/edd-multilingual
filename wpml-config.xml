@@ -52,6 +52,11 @@
             <key name="add_to_cart_text" />
         </key>
     </admin-texts>
+    <gutenberg-blocks>
+        <gutenberg-block type="edd/buy-button" translate="1">
+            <key name="download_id" type="post-ids" sub-type="download" />
+        </gutenberg-block>
+    </gutenberg-blocks>
 </wpml-config>
 
 
