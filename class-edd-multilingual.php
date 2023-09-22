@@ -97,6 +97,9 @@ class EDD_Multilingual {
 
 		// Support for 'Checkout Fields Manager' extension.
 		add_filter( 'option_cfm-checkout-form', array( $this, 'translate_checkout_fields_id' ) );
+
+		// Adds support for REST requests.
+		add_filter( 'edd_api_v2_products_query_args', array( $this, 'rest_returns_current_language' ) );
 	}
 
 	/**
@@ -213,4 +216,16 @@ class EDD_Multilingual {
 	public static function get_payment_language( $payment_id ) {
 		return get_post_meta( intval( $payment_id ), 'wpml_language', true );
 	}
+
+	/**
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function rest_returns_current_language( $args ) {
+		$args['suppress_filters'] = false;
+
+		return $args;
+	}
+
 }
