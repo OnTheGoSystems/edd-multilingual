@@ -1,19 +1,19 @@
-=== EDD Multilingual ===
+=== WPML Multilingual for Easy Digital Downloads ===
 Contributors: dgwatkins, vukvukovich
 Donate link: http://wpml.org/documentation/related-projects/easy-digital-downloads-multilingual/
 Tags: e-commerce, multilingual, WPML, download, EDD
 License: GPLv2
 Requires at least: 4.7
 Tested up to: 6.8
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 
-Easy Digital Downloads Multilingual is the glue plugin, which is providing seamless integration between Easy Digital Downloads and WPML.
+WPML Multilingual for Easy Digital Downloads is the glue plugin that provides seamless integration between Easy Digital Downloads and WPML.
 
 == Description ==
 
-EDD Multilingual lets you run light-weight and digital shops, with electronic-only delivery, in multiple languages.
+WPML Multilingual for Easy Digital Downloads lets you run light-weight and digital shops, with electronic-only delivery, in multiple languages.
 
-Easy Digital Downloads Multilingual is the glue plugin, which is providing seamless integration between [Easy-Digital-Downloads](https://wordpress.org/plugins/easy-digital-downloads/) and [WPML](http://wpml.org).
+WPML Multilingual for Easy Digital Downloads is the glue plugin that provides seamless integration between [Easy-Digital-Downloads](https://wordpress.org/plugins/easy-digital-downloads/) and [WPML](http://wpml.org).
 
 
 **Contribute**
@@ -30,9 +30,12 @@ This is a glue plugin between EDD and WPML. You need to have both in order for t
 == Screenshots ==
 
 1. Downloads table with languages column
-2. Payments history table with languages information
+2. Payments history table with language information
 
 == Changelog ==
+
+= 1.4.3 =
+* Rename plugin.
 
 = 1.4.2 =
 * Bump WordPress tested version.
