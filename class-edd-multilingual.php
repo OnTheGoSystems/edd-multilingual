@@ -44,7 +44,7 @@ class EDD_Multilingual {
 	public function error_no_plugins() {
 		$message = __( '%s plugin is enabled but not effective. It requires %s and %s plugins in order to work.', 'edd_multilingual' );
 		echo '<div class="error"><p>' .
-			 sprintf( $message, '<strong>EDD multilingual</strong>',
+			 sprintf( $message, '<strong>WPML Multilingual for Easy Digital Downloads</strong>',
 				                '<a href="http://wpml.org/">WPML</a>',
 				                '<a href="https://wordpress.org/plugins/easy-digital-downloads/">Easy Digital Downloads</a>' ) .
 			 '</p></div>';
@@ -55,7 +55,7 @@ class EDD_Multilingual {
 	 */
 	public function error_wpml_update() {
 		$message = __( '%s plugin is enabled but not effective. It requires at least WPML 4.0.', 'edd_multilingual' );
-		echo '<div class="error"><p>' . sprintf( $message, '<strong>EDD multilingual</strong>' ) . '</p></div>';
+		echo '<div class="error"><p>' . sprintf( $message, '<strong>WPML Multilingual for Easy Digital Downloads</strong>' ) . '</p></div>';
 	}
 
 	/**
@@ -63,7 +63,7 @@ class EDD_Multilingual {
 	 */
 	public function error_wpml_setup() {
 		$message = __( '%s plugin is enabled but not effective. You have to finish WPML setup.', 'edd_multilingual' );
-		echo '<div class="error"><p>' . sprintf( $message, '<strong>EDD multilingual</strong>' ) . '</p></div>';
+		echo '<div class="error"><p>' . sprintf( $message, '<strong>WPML Multilingual for Easy Digital Downloads</strong>' ) . '</p></div>';
 	}
 
 	/**
