@@ -4,7 +4,7 @@ Donate link: http://wpml.org/documentation/related-projects/easy-digital-downloa
 Tags: e-commerce, multilingual, WPML, download, EDD
 License: GPLv2
 Requires at least: 4.7
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag: 1.4.3
 
 WPML Multilingual for Easy Digital Downloads is the glue plugin that provides seamless integration between Easy Digital Downloads and WPML.
