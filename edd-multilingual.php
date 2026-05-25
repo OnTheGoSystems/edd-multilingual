@@ -3,7 +3,7 @@
 Plugin Name: WPML Multilingual for Easy Digital Downloads
 Plugin URI: https://wordpress.org/plugins/edd-multilingual/
 Description: A plugin that enables seamless integration between Easy Digital Downloads and WPML | <a href="https://wpml.org/documentation/related-projects/easy-digital-downloads-multilingual/?utm_source=plugin&utm_medium=gui&utm_campaign=eddml">Documentation</a>
-Version: 1.4.3
+Version: 1.4.4
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com/
 Text Domain: edd_multilingual
@@ -13,7 +13,7 @@ if ( defined( 'EDD_MULTILINGUAL_VERSION' ) ) {
 	return;
 }
 
-define( 'EDD_MULTILINGUAL_VERSION', '1.4.3' );
+define( 'EDD_MULTILINGUAL_VERSION', '1.4.4' );
 define( 'EDD_MULTILINGUAL_PATH', __DIR__ );
 
 require EDD_MULTILINGUAL_PATH . '/class-edd-multilingual.php';
