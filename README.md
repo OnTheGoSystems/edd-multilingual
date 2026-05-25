@@ -1,7 +1,7 @@
 
 # WPML Multilingual for Easy Digital Downloads
 
-![Latest Stable Version](https://img.shields.io/badge/stable-1.4.3-green.svg?style=flat-squar)
+![Latest Stable Version](https://img.shields.io/badge/stable-1.4.4-green.svg?style=flat-squar)
 ![License](https://img.shields.io/badge/license-GPLv2-red.svg?style=flat-squar)
 
 
